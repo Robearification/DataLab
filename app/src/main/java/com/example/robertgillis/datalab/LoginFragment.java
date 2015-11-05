@@ -1,6 +1,7 @@
 package com.example.robertgillis.datalab;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.io.OutputStreamWriter;
 
 
 /**
@@ -21,6 +25,7 @@ public class LoginFragment extends Fragment{
     private EditText mPassword;
     private Button mLogin;
     private MyMenuListener mMyMenuListener;
+    private SharedPreferences mSharedPreferences;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -39,15 +44,53 @@ public class LoginFragment extends Fragment{
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences mSharedPreferences = getActivity().getSharedPreferences
-                        (getString(R.string.SHARED_PREFS),Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = mSharedPreferences.edit();
-                editor.putBoolean(getString(R.string.LOGGEDIN), true);
-                editor.commit();
-                ((MyMenuListener) getActivity()).startMenu();
+                if (validateAndStore()) {
+                    mSharedPreferences = getActivity().getSharedPreferences(
+                            getString(R.string.SHARED_PREFS), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = mSharedPreferences.edit();
+                    editor.putBoolean(getString(R.string.LOGGEDIN), true);
+                    editor.commit();
+                    ((MyMenuListener) getActivity()).startMenu();
+                }
+
             }
         });
         return v;
+    }
+
+    private boolean validateAndStore() {
+        Activity activity = getActivity();
+        EditText mEmail = (EditText) activity.findViewById(R.id.email);
+        if (mEmail.getText().length() == 0) {
+            Toast.makeText(activity, "Please enter email", Toast.LENGTH_LONG)
+                    .show();
+            mEmail.requestFocus();
+            return false;
+        }
+        EditText mPassword = (EditText) activity.findViewById(R.id.password);
+        if (mPassword.getText().length() == 0) {
+            Toast.makeText(activity, "Please enter password", Toast.LENGTH_LONG)
+                    .show();
+            mPassword.requestFocus();
+            return false;
+        }
+        //Store in file
+
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(
+                    activity.openFileOutput(getString(R.string.ACCT_FILE)
+                            , Context.MODE_PRIVATE));
+            outputStreamWriter.write("email = " + mEmail.getText().toString() + ";");
+            outputStreamWriter.write("password = " + mPassword.getText().toString());
+            outputStreamWriter.close();
+            Toast.makeText(activity, "Stored in File Successfully!", Toast.LENGTH_LONG)
+                    .show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
     public interface MyMenuListener {

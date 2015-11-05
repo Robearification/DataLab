@@ -2,17 +2,22 @@ package com.example.robertgillis.datalab;
 
 
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MenuFragment extends Fragment {
-
+    private TextView mDisplay;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -22,8 +27,30 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_menu, container, false);
+
+        View v = inflater.inflate(R.layout.fragment_menu, container, false);
+        mDisplay = (TextView) v.findViewById(R.id.display);
+
+        try {
+            InputStream inputStream = v.getContext().openFileInput(getString(R.string.ACCT_FILE));
+
+            if(inputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while((receiveString = bufferedReader.readLine()) != null){
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                mDisplay.setText(stringBuilder.toString());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return v;
     }
 
 
