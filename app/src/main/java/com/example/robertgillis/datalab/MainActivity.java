@@ -9,7 +9,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.MyMenuListener {
+import java.util.List;
+
+import data.UserInfoDB;
+import model.UserInfo;
+
+public class MainActivity extends AppCompatActivity implements LoginFragment.MyMenuListener, MenuFragment.OnUserInfoInteractionListener {
 
     private SharedPreferences mSharedPreferences;
 
@@ -39,9 +44,28 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.MyM
                         .commit();
             }
         }
+    }
+
+    @Override
+    public void showUserFragment(int position) {
+        UserFragment userFragment = new UserFragment();
+        Bundle args = new Bundle();
+        args.putInt(UserFragment.POSITION, position);
+        userFragment.setArguments(args);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new UserFragment())
+                .addToBackStack(null)
+                .commit();
 
 
+    }
 
+
+    public static List<UserInfo> getUserList(Context c) {
+        UserInfoDB userInfoDB = new UserInfoDB(c);
+        List<UserInfo> list = userInfoDB.selectUsers();
+        userInfoDB.closeDB();
+        return list;
     }
 
     @Override

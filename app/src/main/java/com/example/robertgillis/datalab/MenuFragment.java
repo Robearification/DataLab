@@ -6,11 +6,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
+
+import model.UserInfo;
 
 
 /**
@@ -18,6 +24,7 @@ import java.io.InputStreamReader;
  */
 public class MenuFragment extends Fragment {
     private TextView mDisplay;
+    private OnUserInfoInteractionListener mCallback;
 
     public MenuFragment() {
         // Required empty public constructor
@@ -27,30 +34,31 @@ public class MenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v =  inflater.inflate(R.layout.fragment_menu, container, false);
+        ListView userInfo = (ListView) v.findViewById(R.id.user_info);
 
-        View v = inflater.inflate(R.layout.fragment_menu, container, false);
-        mDisplay = (TextView) v.findViewById(R.id.display);
+        List<UserInfo> list =   MainActivity.getUserList(v.getContext());
 
-        try {
-            InputStream inputStream = v.getContext().openFileInput(getString(R.string.ACCT_FILE));
+        ArrayAdapter<UserInfo> adapter = new ArrayAdapter<UserInfo>(v.getContext(),
+                android.R.layout.simple_list_item_1
+                , android.R.id.text1, list);
+        userInfo.setAdapter(adapter);
 
-            if(inputStream != null) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
+        userInfo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mCallback = (OnUserInfoInteractionListener) getActivity();
+                mCallback.showUserFragment(i);
 
-                while((receiveString = bufferedReader.readLine()) != null){
-                    stringBuilder.append(receiveString);
-                }
-
-                inputStream.close();
-                mDisplay.setText(stringBuilder.toString());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        });
+
         return v;
+    }
+
+    public interface OnUserInfoInteractionListener {
+        public void showUserFragment(int position);
     }
 
 

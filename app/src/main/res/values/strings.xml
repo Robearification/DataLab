@@ -10,6 +10,7 @@
     <string name="LOGGEDIN">loggedin</string>
     <string name="action_logout">Logout</string>
     <string name="ACCT_FILE">com.example.robertgillis.datalab.ACCT_FILE</string>
+    <string name="delete">Delete</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

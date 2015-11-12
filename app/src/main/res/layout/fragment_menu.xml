@@ -10,4 +10,10 @@
         android:layout_height="match_parent"
         android:id="@+id/display"/>
 
+    <ListView
+        android:id="@+id/user_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
 </FrameLayout>

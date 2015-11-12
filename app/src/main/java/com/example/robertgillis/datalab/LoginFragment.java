@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import java.io.OutputStreamWriter;
 
+import data.UserInfoDB;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +28,7 @@ public class LoginFragment extends Fragment{
     private Button mLogin;
     private MyMenuListener mMyMenuListener;
     private SharedPreferences mSharedPreferences;
+    private UserInfoDB mUserInfoDB;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -90,6 +93,11 @@ public class LoginFragment extends Fragment{
             return false;
         }
 
+        mUserInfoDB = new UserInfoDB(activity);
+        if(mUserInfoDB.insertUser(mEmail.getText().toString(), mPassword.getText().toString())) {
+            Toast.makeText(activity, "Added login to Local Database", Toast.LENGTH_LONG).show();
+        }
+        mUserInfoDB.closeDB();
         return true;
     }
 
