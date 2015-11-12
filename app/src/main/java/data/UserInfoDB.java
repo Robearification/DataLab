@@ -69,6 +69,14 @@ public class UserInfoDB {
         return rowId != -1;
     }
 
+    public void resetPassword(String email, String pwd) {
+        ContentValues values = new ContentValues();
+        values.put("pwd", pwd);
+        mSQLiteDatabase.update(
+                "User", values, "email=?", new String[] {email});
+    }
+
+
     public void deleteUserByEmail(String email) {
         mSQLiteDatabase.delete("User", "email=?",new String[] {email});
     }

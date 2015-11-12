@@ -14,7 +14,7 @@ import java.util.List;
 import data.UserInfoDB;
 import model.UserInfo;
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.MyMenuListener, MenuFragment.OnUserInfoInteractionListener {
+public class MainActivity extends AppCompatActivity implements LoginFragment.MyMenuListener, MenuFragment.OnUserInfoInteractionListener, UserFragment.ResetPasswordListener {
 
     private SharedPreferences mSharedPreferences;
 
@@ -53,13 +53,25 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.MyM
         args.putInt(UserFragment.POSITION, position);
         userFragment.setArguments(args);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new UserFragment())
+                .replace(R.id.fragment_container, userFragment)
                 .addToBackStack(null)
                 .commit();
 
 
     }
 
+    @Override
+    public void launchResetPassword(String email) {
+        ResetPasswordFragment resetPasswordFragment = new ResetPasswordFragment();
+        Bundle args = new Bundle();
+        args.putString(ResetPasswordFragment.EMAIL, email);
+        resetPasswordFragment.setArguments(args);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, resetPasswordFragment)
+                .addToBackStack(null)
+                .commit();
+    }
 
     public static List<UserInfo> getUserList(Context c) {
         UserInfoDB userInfoDB = new UserInfoDB(c);

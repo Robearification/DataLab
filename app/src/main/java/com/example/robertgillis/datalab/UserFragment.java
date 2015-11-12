@@ -24,6 +24,7 @@ public class UserFragment extends Fragment {
     private int mUserPosition = -1;
     private TextView mEmail;
     private TextView mPassword;
+    private Button mResetPwd;
     private Button mDelete;
 
     public UserFragment() {
@@ -37,7 +38,7 @@ public class UserFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_user, container, false);
 
-        Button mDelete = (Button) v.findViewById(R.id.delete_user);
+        mDelete = (Button) v.findViewById(R.id.delete_user);
         mDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -46,6 +47,14 @@ public class UserFragment extends Fragment {
                 userInfoDB.closeDB();
 
                 getFragmentManager().popBackStackImmediate();
+            }
+        });
+
+        mResetPwd = (Button) v.findViewById(R.id.reset_pwd_button);
+        mResetPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ResetPasswordListener)getActivity()).launchResetPassword(mEmail.getText().toString());
             }
         });
 
@@ -67,8 +76,8 @@ public class UserFragment extends Fragment {
     }
     public void updateUserView(int id) {
         Activity activity = getActivity();
-        TextView mEmail = (TextView) activity.findViewById(R.id.email_text);
-        TextView mPassword = (TextView) activity.findViewById(R.id.pwd_text);
+        mEmail = (TextView) activity.findViewById(R.id.email_text);
+        mPassword = (TextView) activity.findViewById(R.id.pwd_text);
         List<UserInfo> list =   MainActivity.getUserList(
                 activity.getApplicationContext());
 
@@ -79,5 +88,7 @@ public class UserFragment extends Fragment {
         }
     }
 
-
+    public interface ResetPasswordListener {
+        public void launchResetPassword(String email);
+    }
 }
